@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate,login,logout
 
 from django.contrib.auth.decorators import login_required
 
+from .models import BlogArticle
 # Create your views here.
 def index(request):
     if request.method == "POST":
@@ -26,11 +27,13 @@ def index(request):
 
 @login_required(login_url='index')
 def home(request):
-    return render(request,'home.html')
+    blogs = BlogArticle.objects.all()
+    return render(request,'home.html',{'blogs':blogs})
 
 @login_required(login_url='index')
-def article(request):
-    return render(request,'article.html')
+def article(request,pk):
+    blog = BlogArticle.objects.get(id=pk)
+    return render(request,'article.html',{'blog':blog})
 
 
 def signout(request):
@@ -51,3 +54,5 @@ def register(request):
         user.set_password(pwd)
         user.save()
         return redirect('index')
+
+
